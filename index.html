@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Comissão e Pacotes</title>
+    <style>
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        body {
+            background-image: url('LINK_DO_PLANO_DE_FUNDO');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            font-family: 'Comic Sans MS', 'Comic Sans', cursive;
+            color: #008080;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .panel {
+            width: 22%;
+            padding: 20px;
+            border: 2px solid #008080;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            margin: 20px;
+            display: inline-block;
+            vertical-align: top;
+            background-color: rgba(0, 51, 51, 0.9);
+            position: relative;
+        }
+        h2 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            text-align: center;
+            color: #00cccc;
+            animation: blink 2s infinite;
+        }
+        button {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            background-color: #004d99;
+            color: #ffffff;
+            cursor: pointer;
+        }
+        input[type="text"], input[type="number"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin: 5px 0;
+            border: 2px solid #00cccc;
+            border-radius: 5px;
+            background-color: #002626;
+            color: #00cccc;
+            animation: blink 2s infinite;
+        }
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+            display: block;
+            color: #00cccc;
+            animation: blink 2s infinite;
+        }
+        p {
+            margin: 10px 0;
+            padding: 0;
+            color: #00cccc;
+            animation: blink 2s infinite;
+        }
+        a {
+            color: #00cccc;
+            text-decoration: none;
+            animation: blink 2s infinite;
+        }
+    </style>
+    <script>
+        let exchangeRate = 5.60;
+        let pacoteQuantidades = {
+            10: 0,
+            30: 0,
+            50: 0,
+            100: 0
+        };
+
+        const pacotePrecos = {
+            10: 40.95,
+            30: 117.81,
+            50: 196.35,
+            100: 392.70
+        };
+
+        function updatePacoteQuantidades(pacote, quantidade) {
+            pacoteQuantidades[pacote] = parseInt(quantidade) || 0;
+            updatePacoteTotals();
+        }
+
+        function updatePacoteTotals() {
+            let totalR = 0;
+            let totalD = 0;
+            Object.keys(pacoteQuantidades).forEach(pacote => {
+                const subtotalR = pacoteQuantidades[pacote] * pacotePrecos[pacote];
+                const subtotalD = pacoteQuantidades[pacote] * pacotePrecos[pacote] / exchangeRate;
+                document.getElementById(`totalR${pacote}`).innerText = subtotalR.toFixed(2);
+                document.getElementById(`totalD${pacote}`).innerText = subtotalD.toFixed(2);
+                totalR += subtotalR;
+                totalD += subtotalD;
+            });
+            document.getElementById('totalRPacotes').innerText = totalR.toFixed(2);
+            document.getElementById('totalDPacotes').innerText = totalD.toFixed(2);
+        }
+
+        function copyToClipboard() {
+            const totalR = document.getElementById('totalRPacotes').innerText;
+            const totalD = document.getElementById('totalDPacotes').innerText;
+            const quantidades = Object.keys(pacoteQuantidades).map(pacote => `Pacote de $${pacote}: ${pacoteQuantidades[pacote]}`).join('\n');
+            const textToCopy = `Total em R$: ${totalR}\nTotal em $: ${totalD}\n${quantidades}`;
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                alert('Informações copiadas para a área de transferência!');
+            });
+        }
+    </script>
+</head>
+<body>
+    <div class="panel">
+        <h2>Pacote de $10</h2>
+        <label for="pacote10">Quantidade:</label>
+        <input type="number" id="pacote10" value="0" oninput="updatePacoteQuantidades(10, this.value)"><br>
+        <p>Preço com desconto: R$40,95</p>
+        <p>Total: R$<span id="totalR10">0.00</span> / $<span id="totalD10">0.00</span></p>
+    </div>
+    <div class="panel">
+        <h2>Pacote de $30</h2>
+        <label for="pacote30">Quantidade:</label>
+        <input type="number" id="pacote30" value="0" oninput="updatePacoteQuantidades(30, this.value)"><br>
+        <p>Preço com desconto: R$117,81</p>
+        <p>Total: R$<span id="totalR30">0.00</span> / $<span id="totalD30">0.00</span></p>
+    </div>
+    <div class="panel">
+        <h2>Pacote de $50</h2>
+        <label for="pacote50">Quantidade:</label>
+        <input type="number" id="pacote50" value="0" oninput="updatePacoteQuantidades(50, this.value)"><br>
+        <p>Preço com desconto: R$196,35</p>
+        <p>Total: R$<span id="totalR50">0.00</span> / $<span id="totalD50">0.00</span></p>
+    </div>
+    <div class="panel">
+        <h2>Pacote de $100</h2>
+        <label for="pacote100">Quantidade:</label>
+        <input type="number" id="pacote100" value="0" oninput="updatePacoteQuantidades(100, this.value)"><br>
+        <p>Preço com desconto: R$392,70</p>
+        <p>Total: R$<span id="totalR100">0.00</span> / $<span id="totalD100">0.00</span></p>
+    </div>
+    <div class="panel">
+        <h2>Total de Todos os Pacotes</h2>
+        <p>Total: R$<span id="totalRPacotes">0.00</span> / $<span id="totalDPacotes">0.00</span></p>
+        <button onclick="copyToClipboard()">Copiar Total</button>
+    </div>
+</body>
+</html>
